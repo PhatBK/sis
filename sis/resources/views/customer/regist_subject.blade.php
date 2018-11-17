@@ -76,10 +76,7 @@
       var code_subject = $('#code_subject').val();
       var code_student = `{{ $code_student }}`;
       var url = `{{ route('RegistAjax') }}`;
-      let code_sub_date = {
-        'code_subject' : code_subject,
-        'date_regist' : null,
-      };
+      let code_sub_date = [code_subject];
       code_student = code_student;
 
       $.ajax({
@@ -94,7 +91,8 @@
           if (response[0][0] != null) {
 
             results.add(response[0][0]);
-            code_sub_date.date_regist = response[1];
+            code_sub_date.push(response[1]);
+            code_sub_date.push(response[2]);
             code_subject_all.add(code_sub_date);
 
             var result_show = ' ';
@@ -141,7 +139,6 @@
         url : url,
         data : {
           'code_subject_all' : data_send,
-          'code_student' : code_student,
         },
         type : 'post',
         success : function(response) {
