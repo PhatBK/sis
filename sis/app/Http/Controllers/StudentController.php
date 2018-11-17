@@ -142,19 +142,81 @@ class StudentController extends Controller
 
     }
     // đăng ký học tập
-    public function getStudentRegistSubject() {
-        return view('customer.student_regist');
+    public function getStudentRegistSubject($code_student) {
+        return view('customer.regist_subject',['code_student' => $code_student]);
     }
-    public function postStudentRegistSubject(Request $req) {
+    public function postStudentRegistSubject(Request $req, $code_student) {
+        $arrays = [];
+        $arrays['code_student'] = $code_student;
+        $arrays['code_subject'] = $req->code_subject;
+      
+        $regist_subject = new RegistSubject;
+        $created = $regist_subject->createRegistSubject($arrays);
 
+        if(!$created) {
+            return "Error create new record Regist Subject";
+        }
+        $data = $regist_subject->getAllRegistSubject();
+
+        return redirect('student/regist/subjects/'.$code_student);
     }
     public function getStudentRegistSubjectFree() {
-        return view('customer.student_regist_free');
+        return view('customer.regist_subject_free');
     }
     public function postStudentRegistSubjectFree(Request $req) {
 
     }
+    // Ajax đăng ký học phần và học phần tự chọn tự
+    public function ajaxStudentRegistSubject(Request $req) {
+        $data_response = [];
 
+        $code_subject = $req->code_subject;
+        $date = $req->date;
+        $code_student = $req->code_student;
+        //$date = date("Ymd");
+        $date = date('Y-m-d H:i:s');
+        
+        // $arrays['code_student'] = $req->code_student;
+        // $arrays['code_subject'] = $req->code_subject;
+        // $arrays['date'] = $date;
+        // $regist_subject = new RegistSubject;
+        // $created = $regist_subject->createRegistSubject($arrays);
+
+        $subject = new Subject;
+        $subject_info = $subject->getSubjectInfo($code_subject);
+        
+        $subject_info_full = $subject->getFullSubjectInfo($code_subject);
+        $status = true;
+        if($subject_info_full == null) {
+            $status = false;
+        }
+
+        $data_response[0] = $subject_info_full;
+        $data_response[1] = $date;
+        return response()->json($data_response);
+    }
+    public function saveRegistSubject(Request $req) {
+        $code_subject_all = $req->code_subject_all;
+        $code_student = $req->code_student; 
+        $arrays = [];
+        $regist_subject = new RegistSubject;
+
+        foreach ($code_subject_all as $codeSubDate) {
+            $arrays['code_student'] = $req->code_student;
+            $arrays['code_subject'] = json_decode($codeSubDate)[0]['code_subject'];
+            $arrays['date'] = json_decode($codeSubDate)[1]['date_regist'];
+            $created = $regist_subject->createRegistSubject($arrays);
+        }
+        
+        return response()->json($code_subject_all);
+
+    }
+    public function ajaxStudentRegistSubjectFree(Request $req) {
+
+    }
+    public function saveRegistSubjectFree(Request $req) {
+
+    }
     // phần dành cho hỏi đáp, phản hồi, tra cứu các hướng dẫn..
     public function getViewQuestion() {
         return view('customer.question');
