@@ -193,21 +193,24 @@ class StudentController extends Controller
 
         $data_response[0] = $subject_info_full;
         $data_response[1] = $date;
+        $data_response[2] = $code_student;
         return response()->json($data_response);
     }
     public function saveRegistSubject(Request $req) {
         $code_subject_all = $req->code_subject_all;
-        $code_student = $req->code_student; 
-        $arrays = [];
-        $regist_subject = new RegistSubject;
-
-        foreach ($code_subject_all as $codeSubDate) {
-            $arrays['code_student'] = $req->code_student;
-            $arrays['code_subject'] = json_decode($codeSubDate)[0]['code_subject'];
-            $arrays['date'] = json_decode($codeSubDate)[1]['date_regist'];
-            $created = $regist_subject->createRegistSubject($arrays);
-        }
+        $code_student = $req->code_student;
         
+        $regist_subject = new RegistSubject;
+        for($i = 0; $i < count($code_subject_all); $i++) {
+            $arrays = [];
+            $arrays['code_student'] = intval($code_subject_all[$i][2]);
+            $arrays['code_subject'] = $code_subject_all[$i][0];
+            $arrays['date'] = $code_subject_all[$i][1];
+
+            $created = $regist_subject->createRegistSubject($arrays);
+
+        }
+
         return response()->json($code_subject_all);
 
     }
