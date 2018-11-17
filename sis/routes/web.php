@@ -50,11 +50,19 @@ Route::get('student/result/toeic', 'StudentController@getResultToeic');
 Route::post('student/result/toeic/search', 'StudentController@postToeicSearch');
 
 // đăng ký học phần
-Route::get('student/regist/subjects', 'StudentController@getStudentRegistSubject');
-Route::post('student/regist/subject', 'StudentController@postStudentRegistSubject');
+Route::get('student/regist/subjects/{code_student}', 'StudentController@getStudentRegistSubject');
+// Route::post('student/regist/subject/{code_student}', 'StudentController@postStudentRegistSubject');
+// Route::get('student/regist/subject/result', 'StudentController@getSubjectRegistResult');
 
-Route::get('student/regist/subject/free', 'StudentController@getRegistSubjectFree');
-Route::post('student/regist/subject/free', 'StudentController@postRegistSubjectFree');
+Route::get('student/regist/subject/free/{code_student}', 'StudentController@getRegistSubjectFree');
+Route::post('student/regist/subject/free/{code_student}', 'StudentController@postRegistSubjectFree');
+
+// route đăng ký học phền sử dụng ajax
+Route::post('RegistAjax',['as' => 'RegistAjax', 'uses' => 'StudentController@ajaxStudentRegistSubject']);
+Route::post('SaveRegistSubject', ['as' => 'SaveRegistSubject', 'uses' => 'StudentController@saveRegistSubject']);
+
+Route::post('RegistAjaxFree', ['as' => 'RegistAjaxFree', 'uses' => 'StudentController@ajaxStudentRegistSubjectFree']);
+Route::post('SaveRegistSubjectFree', ['as' => 'SaveRegistSubjectFree', 'uses' => 'StudentController@saveRegistSubjectFree']);
 
 // phần câu hỏi về các chủ đề của các sinh viên
 Route::get('student/question', 'StudentController@getViewQuestion');
@@ -66,3 +74,7 @@ Route::get('student/branch/result', 'StudentController@getBranchResult');
 Route::get('student/regist/learning', 'StudentController@getStudentRegistLearning');
 Route::get('student/learning/cost', 'StudentController@getStudentLearningCost');
 Route::get('student/approval/project/final/result', 'StudentController@getStudentApprovalProjectFinal');
+
+Route::get('date', function() {
+	dd(date('Y-m-d H:i:s'));
+});
